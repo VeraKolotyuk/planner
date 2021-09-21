@@ -1,0 +1,5 @@
+const ACTION_TYPES = {
+    FETCH_GOALS_SUCCESS: 'FETCH_GOALS_SUCCESS'
+};
+
+export default ACTION_TYPES;
