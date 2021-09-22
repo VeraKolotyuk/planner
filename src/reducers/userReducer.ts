@@ -3,12 +3,14 @@ import {IGoal} from '../components/GoalsPage/goal.interface';
 import { AnyAction } from 'redux';
 
 type UserState = {
-    goals: IGoal[]
+    goals: IGoal[],
+    isShownCreateGoalModal: boolean
 }
 
 const userReducer = (
     state: UserState = {
-        goals: []
+        goals: [],
+        isShownCreateGoalModal: false
     },
     action: AnyAction
 ): UserState => {
@@ -17,6 +19,11 @@ const userReducer = (
             return {
                 ...state,
                 goals: action.goals
+            };
+        case ACTION_TYPES.TOGGLE_CREATE_GOAL_MODAL:
+            return {
+                ...state,
+                isShownCreateGoalModal: action.isShown
             };
         default:
             return state;
