@@ -67,3 +67,17 @@ export function deleteGoal(goalId: string):AppThunk {
         });
     };
 }
+
+export function addTodo(goal: IGoal, todo: string, todos: string[]):AppThunk {
+    return dispatch => {
+        fetch(`${goalsUrl}/${goal.id}`, {method: 'PUT',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({...goal, checklist: [...todos, todo]})
+        })
+        .then(res => res.json()).then(() => {
+            return dispatch(fetchGoals());
+        }).catch(err => {
+            console.log(err);
+        });
+    };
+}

@@ -1,17 +1,19 @@
 import React, {useEffect} from 'react';
 import {connect, ConnectedProps} from 'react-redux';
 import {bindActionCreators, Dispatch} from 'redux';
-//import './styles.css';
-import {fetchGoals, toggleCreateGoalModal, saveGoal, deleteGoal} from '../../actions/userActions';
+import {fetchGoals, toggleCreateGoalModal, saveGoal, deleteGoal, addTodo} from '../../actions/userActions';
 import {IGoal} from './goal.interface';
 import {RootState} from '../../store';
 import CreateGoal from '../CreateGoal/CreateGoal';
+import GoalChecklist from '../GoalChecklist/GoalChecklist';
+import CreateGoalChecklist from '../CreateGoalChecklist/CreateGoalChecklist';
 
 const mapDispatchToProps = (dispatch:Dispatch) => ({
     fetchGoals: bindActionCreators(fetchGoals, dispatch),
     toggleCreateGoalModal: bindActionCreators(toggleCreateGoalModal, dispatch),
     saveGoal: bindActionCreators(saveGoal, dispatch),
     deleteGoal: bindActionCreators(deleteGoal, dispatch),
+    addTodo: bindActionCreators(addTodo, dispatch),
 });
 
 const mapStateToProps = (store: RootState) => ({
@@ -27,7 +29,8 @@ type GoalProps = PropsFromRedux & {
     fetchGoals: () => void,
     saveGoal: (a: string, b: string) => void,
     deleteGoal: (a: string) => void,
-    isShownCreateGoalModal: boolean
+    isShownCreateGoalModal: boolean,
+    addTodo: (a: IGoal, b: string, c: string[]) => void,
 }
 
 const GoalsPage:React.FC<GoalProps> = ({ goals,
@@ -35,7 +38,8 @@ const GoalsPage:React.FC<GoalProps> = ({ goals,
                                          isShownCreateGoalModal,
                                          toggleCreateGoalModal,
                                          saveGoal,
-                                         deleteGoal
+                                         deleteGoal,
+                                         addTodo
 }: GoalProps) => {
     useEffect(() => {
         fetchGoals();
@@ -53,6 +57,8 @@ const GoalsPage:React.FC<GoalProps> = ({ goals,
                     <li key={goal.id}>
                         <h3>{goal.title}</h3>
                         <p>{goal.description}</p>
+                        {goal.checklist && <GoalChecklist checklist={goal.checklist} />}
+                        <CreateGoalChecklist addTodo={addTodo} goal={goal} />
                         <button onClick={() => deleteGoal(goal.id)}>Delete Goal</button>
                     </li>
                 )}
