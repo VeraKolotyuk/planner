@@ -7,6 +7,9 @@ import {RootState} from '../../store';
 import CreateGoal from '../CreateGoal/CreateGoal';
 import GoalChecklist from '../GoalChecklist/GoalChecklist';
 import CreateGoalChecklist from '../CreateGoalChecklist/CreateGoalChecklist';
+import styled from 'styled-components';
+import SectionHeader from '../Template/SectionHeader';
+import Button from "../Template/Button";
 
 const mapDispatchToProps = (dispatch:Dispatch) => ({
     fetchGoals: bindActionCreators(fetchGoals, dispatch),
@@ -33,6 +36,12 @@ type GoalProps = PropsFromRedux & {
     addTodo: (a: IGoal, b: string, c: string[]) => void,
 }
 
+const GoalsList = styled.ul`
+  list-style: none;
+  display: grid;
+  row-gap: 1rem;
+`;
+
 const GoalsPage:React.FC<GoalProps> = ({ goals,
                                          fetchGoals,
                                          isShownCreateGoalModal,
@@ -47,22 +56,22 @@ const GoalsPage:React.FC<GoalProps> = ({ goals,
 
     return (
         <div>
-            <button onClick={() => toggleCreateGoalModal(true)}>Create Goal</button>
+            <Button onClick={() => toggleCreateGoalModal(true)}>Create Goal</Button>
             <CreateGoal showModal={isShownCreateGoalModal}
                         toggleCreateGoalModal={toggleCreateGoalModal}
                         saveGoal={saveGoal}
             />
-            <ul className="goals-list">
+            <GoalsList>
                 {goals.map((goal: IGoal) =>
                     <li key={goal.id}>
-                        <h3>{goal.title}</h3>
+                        <SectionHeader>{goal.title}</SectionHeader>
                         <p>{goal.description}</p>
                         {goal.checklist && <GoalChecklist checklist={goal.checklist} />}
                         <CreateGoalChecklist addTodo={addTodo} goal={goal} />
-                        <button onClick={() => deleteGoal(goal.id)}>Delete Goal</button>
+                        <Button onClick={() => deleteGoal(goal.id)}>Delete Goal</Button>
                     </li>
                 )}
-            </ul>
+            </GoalsList>
         </div>
     );
 };

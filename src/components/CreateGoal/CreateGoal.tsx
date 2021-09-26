@@ -1,11 +1,42 @@
 import ReactModal from 'react-modal';
 import {FunctionComponent, useState} from 'react';
+import styled from 'styled-components';
+import Input from '../Template/Input';
 
 type Props = {
     showModal: boolean,
     toggleCreateGoalModal: (a:boolean) => void,
     saveGoal: (a:string, b: string) => void,
 }
+
+const formField = `
+    border: none;
+    outline: none;
+    background: #f5f5f5;
+    padding: .5rem 1rem;
+`;
+
+const Form = styled.form`
+    display: grid;
+    row-gap: 1rem;
+`;
+
+
+const Textarea = styled.textarea`
+    ${formField};
+    height: 7.5rem;
+    font-family: Helvetica, sans-serif;
+    resize: none;
+`;
+
+const Button = styled.button`
+    background: lightseagreen;
+    color: white;
+    border: none;
+    height: 2.5rem;
+    cursor: pointer;
+    font-family: Helvetica, sans-serif;
+`;
 
 const CreateGoal: FunctionComponent<Props> = ({ showModal, toggleCreateGoalModal, saveGoal }: Props) => {
     const [title, setTitle] = useState('');
@@ -31,22 +62,22 @@ const CreateGoal: FunctionComponent<Props> = ({ showModal, toggleCreateGoalModal
             isOpen={showModal}
             onRequestClose={() => {toggleCreateGoalModal(false);}}
         >
-            <form>
+            <Form>
                 <h4>New Goal</h4>
-                <label>Title</label>
-                <input type="text"
+                <Input type="text"
+                       placeholder={'Title'}
                        value={title}
                        onChange={(e) => setTitle(e.target.value)}
                 />
-                <label>Description</label>
-                <textarea value={description}
+                <Textarea placeholder="Description"
+                          value={description}
                           onChange={(e) => setDescription(e.target.value)}
                 />
-                <button onClick={(e) => {
+                <Button onClick={(e) => {
                     e.preventDefault();
                     saveGoal(title, description);
-                }}>Save</button>
-            </form>
+                }}>Save</Button>
+            </Form>
         </ReactModal>
     );
 };

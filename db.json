@@ -3,7 +3,15 @@
     {
       "id": 1,
       "title": "Create MVP for Planner application",
-      "description": "By the end of the year I want to create the first prototype of planner application."
+      "description": "By the end of the year I want to create the first prototype of planner application.",
+      "checklist": [
+        "new todo"
+      ]
+    },
+    {
+      "title": "My goal",
+      "description": "Description of my goal",
+      "id": 2
     }
   ]
 }

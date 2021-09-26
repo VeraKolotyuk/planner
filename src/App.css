@@ -1,5 +1,13 @@
 .App {
-  text-align: center;
+  font-family: Helvetica, sans-serif;
+}
+
+p {
+  margin-bottom: .5rem;
+}
+
+ul {
+  list-style: none;
 }
 
 .App-logo {
