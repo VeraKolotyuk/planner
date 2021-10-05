@@ -1,12 +1,17 @@
 import thunk, {ThunkAction} from 'redux-thunk';
 import userReducer from './reducers/userReducer';
+import { createBrowserHistory } from 'history';
+import { routerMiddleware } from 'connected-react-router';
 
 import { configureStore } from '@reduxjs/toolkit';
 import {AnyAction} from 'redux';
+import { connectRouter } from 'connected-react-router';
+
+export const history = createBrowserHistory();
 
 export const store = configureStore({
-    reducer: {userReducer},
-    middleware: [thunk],
+    reducer: {userReducer, router: connectRouter(history),},
+    middleware: [thunk, routerMiddleware(history)],
     devTools: process.env.NODE_ENV !== 'production',
     preloadedState: {}
 });

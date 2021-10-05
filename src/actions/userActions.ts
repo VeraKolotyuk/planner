@@ -12,6 +12,29 @@ export function fetchGoalsSuccess(goals: IGoal[]):AppThunk {
     };
 }
 
+export function fetchGoalSuccess(goal: IGoal | null):AppThunk {
+    return dispatch => {
+        dispatch({
+            type: ACTION_TYPES.FETCH_GOAL_SUCCESS,
+            goal
+        });
+    };
+}
+
+export const fetchGoal = (goalId: string | null):AppThunk => {
+    return dispatch => {
+        if (!goalId) {
+            return dispatch(fetchGoalSuccess(null));
+        }
+
+        fetch(`${goalsUrl}/${goalId}`).then(res => res.json()).then(response => {
+            return dispatch(fetchGoalSuccess(response));
+        }).catch(err => {
+            console.log(err);
+        });
+    };
+};
+
 export const fetchGoals = ():AppThunk => {
     return dispatch => {
         fetch(goalsUrl).then(res => res.json()).then(response => {

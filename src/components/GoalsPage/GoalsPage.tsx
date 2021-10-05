@@ -9,8 +9,7 @@ import GoalChecklist from '../GoalChecklist/GoalChecklist';
 import CreateGoalChecklist from '../CreateGoalChecklist/CreateGoalChecklist';
 import styled from 'styled-components';
 import SectionHeader from '../Template/SectionHeader';
-import Button from "../Template/Button";
-import AddMoodboardImage from "../AddMoodvoardImage/AddMoodboardImage";
+import Button from '../Template/Button';
 
 const mapDispatchToProps = (dispatch:Dispatch) => ({
     fetchGoals: bindActionCreators(fetchGoals, dispatch),
@@ -69,7 +68,6 @@ const GoalsPage:React.FC<GoalProps> = ({ goals,
                         <p>{goal.description}</p>
                         {goal.checklist && <GoalChecklist checklist={goal.checklist} />}
                         <CreateGoalChecklist addTodo={addTodo} goal={goal} />
-                        <AddMoodboardImage />
                         <Button onClick={() => deleteGoal(goal.id)}>Delete Goal</Button>
                     </li>
                 )}
