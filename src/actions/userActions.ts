@@ -81,3 +81,17 @@ export function addTodo(goal: IGoal, todo: string, todos: string[]):AppThunk {
         });
     };
 }
+
+export function updateMoodboard(goal: IGoal, moodboardImage: string):AppThunk {
+    const moodboard = goal.moodboard ? [...goal.moodboard, moodboardImage] : [];
+    return dispatch => {
+        fetch(`${goalsUrl}/${goal.id}`, {method: 'PUT',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({...goal, moodboard})
+        }).then(res => res.json()).then(() => {
+            return dispatch(fetchGoals());
+        }).catch(err => {
+            console.log(err);
+        });
+    };
+}

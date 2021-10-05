@@ -3,4 +3,5 @@ export interface IGoal {
     title: string;
     description: string;
     checklist: string[];
+    moodboard: string[];
 }
