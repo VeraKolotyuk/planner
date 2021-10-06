@@ -2,7 +2,7 @@ import React, {useEffect} from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators, Dispatch} from 'redux';
 import { createMatchSelector } from 'connected-react-router';
-import {deleteGoal, addTodo, fetchGoal} from '../../actions/userActions';
+import {deleteGoal, addTodo, fetchGoal, updateMoodboard} from '../../actions/userActions';
 import {IGoal} from '../GoalsPage/goal.interface';
 import {RootState} from '../../store';
 import GoalChecklist from '../GoalChecklist/GoalChecklist';
@@ -10,11 +10,13 @@ import CreateGoalChecklist from '../CreateGoalChecklist/CreateGoalChecklist';
 import SectionHeader from '../Template/SectionHeader';
 import Button from '../Template/Button';
 import AddMoodboardImage from '../AddMoodvoardImage/AddMoodboardImage';
+import Moodboard from '../Moodboard/Moodboard';
 
 const mapDispatchToProps = (dispatch:Dispatch) => ({
     deleteGoal: bindActionCreators(deleteGoal, dispatch),
     addTodo: bindActionCreators(addTodo, dispatch),
     fetchGoal: bindActionCreators(fetchGoal, dispatch),
+    updateMoodboard: bindActionCreators(updateMoodboard, dispatch),
 });
 
 type paramsProps = {
@@ -38,13 +40,15 @@ type GoalProps = {
     goal: IGoal | null,
     deleteGoal: (a: string) => void,
     addTodo: (a: IGoal, b: string, c: string[]) => void,
-    fetchGoal: (a: string | null) => void
+    fetchGoal: (a: string | null) => void,
+    updateMoodboard: (a: IGoal, b: string) => void;
 }
 
-const Goal:React.FC<GoalProps> = ({ deleteGoal, addTodo, goal, fetchGoal, id}: GoalProps) => {
+const Goal:React.FC<GoalProps> = ({ deleteGoal, addTodo, updateMoodboard, goal, fetchGoal, id}: GoalProps) => {
     useEffect(() => {
         fetchGoal(id);
     }, [id]);
+
     return (
         <div>
             {goal && (
@@ -53,7 +57,8 @@ const Goal:React.FC<GoalProps> = ({ deleteGoal, addTodo, goal, fetchGoal, id}: G
                     <p>{goal.description}</p>
                     {goal.checklist && <GoalChecklist checklist={goal.checklist} />}
                     <CreateGoalChecklist addTodo={addTodo} goal={goal} />
-                    <AddMoodboardImage />
+                    <AddMoodboardImage updateMoodboard={updateMoodboard} goal={goal} />
+                    <Moodboard updateMoodboard={updateMoodboard} goal={goal} />
                     <Button onClick={() => deleteGoal(goal.id)}>Delete Goal</Button>
                 </React.Fragment>
             )}

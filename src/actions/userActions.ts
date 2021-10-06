@@ -2,6 +2,7 @@ import ACTION_TYPES from './actionTypes';
 import { IGoal } from '../components/GoalsPage/goal.interface';
 import { AppThunk } from '../store';
 import { goalsUrl } from '../utils/requestUtils';
+import {toogleMoodboardImage} from '../utils/goalUtils';
 
 export function fetchGoalsSuccess(goals: IGoal[]):AppThunk {
     return dispatch => {
@@ -106,13 +107,13 @@ export function addTodo(goal: IGoal, todo: string, todos: string[]):AppThunk {
 }
 
 export function updateMoodboard(goal: IGoal, moodboardImage: string):AppThunk {
-    const moodboard = goal.moodboard ? [...goal.moodboard, moodboardImage] : [];
+    goal.moodboard = toogleMoodboardImage(goal.moodboard, moodboardImage);
     return dispatch => {
         fetch(`${goalsUrl}/${goal.id}`, {method: 'PUT',
             headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({...goal, moodboard})
+            body: JSON.stringify(goal)
         }).then(res => res.json()).then(() => {
-            return dispatch(fetchGoals());
+            return dispatch(fetchGoal(goal.id));
         }).catch(err => {
             console.log(err);
         });

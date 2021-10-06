@@ -1,7 +1,7 @@
-import React, {FunctionComponent, useState} from 'react';
+import React, { FunctionComponent } from 'react';
 import { useDropzone } from 'react-dropzone';
 import styled from 'styled-components';
-import {IDecodedFile} from './decodedFile.interface';
+import { IDecodedFile } from './decodedFile.interface';
 
 const getColor = (props: {isDragAccept: boolean, isDragReject: boolean, isDragActive: boolean}) => {
     if (props.isDragAccept) {
@@ -37,9 +37,7 @@ type Props = {
 };
 
 const  DropzoneImg: FunctionComponent<Props> = ({onChangeData}: Props) => {
-    const [fileData, setFileData] = useState<IDecodedFile>({base64: '', file: null});
-
-    const {getRootProps, getInputProps, isDragActive, isDragAccept, isDragReject, acceptedFiles } = useDropzone({
+    const {getRootProps, getInputProps, isDragActive, isDragAccept, isDragReject } = useDropzone({
         accept: 'image/*',
         onDrop: acceptedFiles => {
             const file = acceptedFiles[0];
@@ -47,7 +45,6 @@ const  DropzoneImg: FunctionComponent<Props> = ({onChangeData}: Props) => {
             reader.onload = (event: ProgressEvent) => {
                 const target = event.target as FileReader;
                 const data = {base64: target.result, file};
-                setFileData(data);
                 onChangeData(data);
             };
             reader.readAsDataURL(file);
@@ -62,13 +59,6 @@ const  DropzoneImg: FunctionComponent<Props> = ({onChangeData}: Props) => {
                 <input {...getInputProps()} />
                 <p>Drag some files here, or click to select files</p>
             </Container>
-            <div className="f-flex justify-content-center">
-                {acceptedFiles[0] && (
-                    <p>
-                        {acceptedFiles[0].size} bytes
-                    </p>
-                )}
-            </div>
         </div>
     );
 };

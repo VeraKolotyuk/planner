@@ -1,5 +1,6 @@
 import React, {useEffect} from 'react';
 import {connect, ConnectedProps} from 'react-redux';
+import { Link } from 'react-router-dom';
 import {bindActionCreators, Dispatch} from 'redux';
 import {fetchGoals, toggleCreateGoalModal, saveGoal, deleteGoal, addTodo} from '../../actions/userActions';
 import {IGoal} from './goal.interface';
@@ -64,7 +65,7 @@ const GoalsPage:React.FC<GoalProps> = ({ goals,
             <GoalsList>
                 {goals.map((goal: IGoal) =>
                     <li key={goal.id}>
-                        <SectionHeader>{goal.title}</SectionHeader>
+                        <SectionHeader><Link to={`/goal/${goal.id}`}>{goal.title}</Link></SectionHeader>
                         <p>{goal.description}</p>
                         {goal.checklist && <GoalChecklist checklist={goal.checklist} />}
                         <CreateGoalChecklist addTodo={addTodo} goal={goal} />

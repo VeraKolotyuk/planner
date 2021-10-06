@@ -4,7 +4,7 @@ import Modal from 'react-modal';
 import './App.css';
 import GoalsPage from './components/GoalsPage/GoalsPage';
 import Goal from './components/Goal/Goal';
-import { Route, Switch } from 'react-router';
+import { Route, Switch } from 'react-router-dom';
 import { ConnectedRouter } from 'connected-react-router';
 
 type AppProps = {

@@ -1,45 +1,21 @@
-import React, {FunctionComponent, useState} from 'react';
+import React, { FunctionComponent } from 'react';
 import DropzoneImg from './DropzoneImg';
 import {IDecodedFile} from './decodedFile.interface';
+import {IGoal} from '../GoalsPage/goal.interface';
 
 type Props = {
-
+    goal: IGoal;
+    updateMoodboard: (a: IGoal, b: string) => void;
 };
 
-const AddMoodboardImage: FunctionComponent<Props> = () => {
-    const [image, setImage] = useState<IDecodedFile>({base64: '', file: null});
-    const [decoded, setDecoded] = useState(null);
-
+const AddMoodboardImage: FunctionComponent<Props> = ({ updateMoodboard, goal }: Props) => {
     const handleUploadedImg = (data: IDecodedFile) => {
-        setImage(data);
+        updateMoodboard(goal, data.base64 as string);
     };
-    //
-    // const toDataURL = (src: string, callback: (a: string | ArrayBuffer | null) => void) => {
-    //     const xhttp = new XMLHttpRequest();
-    //
-    //     xhttp.onload = function() {
-    //         const fileReader = new FileReader();
-    //         fileReader.onloadend = function() {
-    //             callback(fileReader.result);
-    //         };
-    //         fileReader.readAsDataURL(xhttp.response);
-    //     };
-    //
-    //     xhttp.responseType = 'blob';
-    //     xhttp.open('GET', src, true);
-    //     xhttp.send();
-    // };
-    //
-    // toDataURL(image.preview, (dataURL: string | ArrayBuffer | null) => {
-    //     //setDecoded(dataURL);
-    // });
 
     return (
         <div className="App">
             <DropzoneImg onChangeData={handleUploadedImg} />
-            <div>
-                <p><img src={image.base64 as string} /></p>
-            </div>
         </div>
     );
 };
