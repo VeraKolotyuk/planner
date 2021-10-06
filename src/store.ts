@@ -1,5 +1,6 @@
 import thunk, {ThunkAction} from 'redux-thunk';
 import userReducer from './reducers/userReducer';
+import balanceWheelReducer from './reducers/balanceWheelReducer';
 import { createBrowserHistory } from 'history';
 import { routerMiddleware } from 'connected-react-router';
 
@@ -10,7 +11,7 @@ import { connectRouter } from 'connected-react-router';
 export const history = createBrowserHistory();
 
 export const store = configureStore({
-    reducer: {userReducer, router: connectRouter(history),},
+    reducer: {userReducer, balanceWheelReducer, router: connectRouter(history),},
     middleware: [thunk, routerMiddleware(history)],
     devTools: process.env.NODE_ENV !== 'production',
     preloadedState: {}

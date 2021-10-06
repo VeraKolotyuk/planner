@@ -11,6 +11,7 @@ import CreateGoalChecklist from '../CreateGoalChecklist/CreateGoalChecklist';
 import styled from 'styled-components';
 import SectionHeader from '../Template/SectionHeader';
 import Button from '../Template/Button';
+import BalanceWheel from '../BalanceWheel/BalanceWheel';
 
 const mapDispatchToProps = (dispatch:Dispatch) => ({
     fetchGoals: bindActionCreators(fetchGoals, dispatch),
@@ -57,6 +58,7 @@ const GoalsPage:React.FC<GoalProps> = ({ goals,
 
     return (
         <div>
+            <BalanceWheel />
             <Button onClick={() => toggleCreateGoalModal(true)}>Create Goal</Button>
             <CreateGoal showModal={isShownCreateGoalModal}
                         toggleCreateGoalModal={toggleCreateGoalModal}
