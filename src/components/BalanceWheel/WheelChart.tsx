@@ -2,90 +2,104 @@ import React, {useRef, useEffect} from 'react';
 import * as d3 from 'd3';
 import {PieArcDatum} from 'd3';
 import {IBalanceWheel} from './balanceWheel.interface';
+import './styles.css';
+
+interface IMargin {
+    left: number;
+    right: number;
+    top: number;
+    bottom: number;
+}
+
+interface IDimensions {
+    width: number;
+    height: number;
+    margin: IMargin;
+}
 
 type Props = {
     data: IBalanceWheel[];
+    onLevelClickHandler?: (a: string, b: number) => void;
+    tooltipHtmlRenderer: (a: number, b: number, c: string) => string
+    dimensions: IDimensions;
 }
 
-const WheelChart = ({ data }: Props) => {
+enum Colors {
+    STROKE_COLOR = '#d2d2d2',
+    SELECTED_COLOR = '#7a7aff',
+    DEFAULT_COLOR = '#fff'
+}
+
+const WheelChart = ({ data, onLevelClickHandler, tooltipHtmlRenderer, dimensions }: Props) => {
     const svgRef = useRef(null);
-    //const { width, height, margin } = dimensions;
-    // const svgWidth = width + margin.left + margin.right;
-    // const svgHeight = height + margin.top + margin.bottom;
+    const { width, height, margin } = dimensions;
+    const svgWidth = width + margin.left + margin.right;
+    const svgHeight = height + margin.top + margin.bottom;
+
+    function useTooltip() {
+        const tooltip = d3.select('body').append('div').attr('class', 'wheel-tooltip');
+        tooltip.style('opacity', 0);
+        tooltip.style('left', '0px').style('top', '0px');
+        return {tooltip};
+    }
+
+    function getArcBackground(level: number, arcIndex: number) {
+        return level > arcIndex  ? Colors.SELECTED_COLOR : Colors.DEFAULT_COLOR;
+    }
 
     useEffect(() => {
-        const width = 500,
-            height = 500,
-            radius = Math.min(width, height) / 2,
-            innerRadius = 0.3 * radius;
+        const scale = 10;
 
-        const pie = d3.pie<IBalanceWheel>().value(function(d: IBalanceWheel) { return d.level; });
+        const pie = d3.pie<IBalanceWheel>().value(1);
 
-        // const tip = d3.tip()
-        //     .attr('class', 'd3-tip')
-        //     .offset([0, 0])
-        //     .html(function(d: IBalanceWheel) {
-        //         return d.name + ": <span style='color:orangered'>" + d.level + '</span>';
-        //     });
-
-        const arc = d3.arc<PieArcDatum<IBalanceWheel>>()
-            .innerRadius(innerRadius)
-            .outerRadius(function (d: PieArcDatum<IBalanceWheel>) {
-                return (radius - innerRadius) * (d.data.level / 100.0) + innerRadius;
-            });
-
-        const outlineArc = d3.arc<PieArcDatum<IBalanceWheel>>()
-            .innerRadius(innerRadius)
-            .outerRadius(radius);
-
-        const svg = d3.select('body').append('svg')
-            .attr('width', width)
-            .attr('height', height)
-            .append('g')
+        const svg = d3.select(svgRef.current).append('g')
             .attr('transform', 'translate(' + width / 2 + ',' + height / 2 + ')');
 
-        //svg.call(tip);
+        const {tooltip} = useTooltip();
 
-        const path = svg.selectAll('.solidArc')
+        const arcsWrap = svg.selectAll('.arc')
             .data(pie(data))
-            .enter().append('path')
-            .attr('fill', function () {
-                return 'green';
-            })
-            .attr('class', 'solidArc')
-            .attr('stroke', 'gray')
-            .attr('d', arc)
-            // .on('mouseover', tip.show)
-            // .on('mouseout', tip.hide);
+            .enter();
 
-        const outerPath = svg.selectAll('.outlineArc')
-            .data(pie(data))
-            .enter().append('path')
-            .attr('fill', 'none')
-            .attr('stroke', 'gray')
-            .attr('class', 'outlineArc')
-            .attr('d', outlineArc);
+        data.forEach(() => {
+            let l = 0;
+            while(l < scale) {
+                const arc = d3.arc<PieArcDatum<IBalanceWheel>>()
+                    .innerRadius(l*scale)
+                    .outerRadius(l*scale + scale);
 
+                arcsWrap.append('path')
+                    .attr('fill', function (d: PieArcDatum<IBalanceWheel>) {
+                        return getArcBackground(d.data.level, l);
+                    })
+                    .attr('class', 'arc')
+                    .attr('data-index', l)
+                    .attr('stroke', Colors.STROKE_COLOR)
+                    .attr('d', arc)
+                    .on('mouseover', (event, d) => {
+                        const i = event.currentTarget.getAttribute('data-index');
+                        tooltip.html(tooltipHtmlRenderer(d.data.level, +i+1, d.data.name))
+                            .style('left', (event.pageX + 7) + 'px')
+                            .style('top', (event.pageY + 7) + 'px');
+                        tooltip.style('opacity', .9);
+                    })
+                    .on('mouseout', function() {
+                        tooltip.style('opacity', 0);
+                        tooltip.style('left', '0px').style('top', '0px');
+                    })
+                    .on('click', (event, d) => {
+                        if (onLevelClickHandler) {
+                            onLevelClickHandler(d.data.name, event.currentTarget.getAttribute('data-index'));
+                        }
+                    });
 
-        // // calculate the weighted mean score
-        // const score =
-        //     data.reduce(function (a, b) {
-        //         //console.log('a:' + a + ', b.score: ' + b.score + ', b.weight: ' + b.weight);
-        //         return a + (b.score * b.weight);
-        //     }, 0) /
-        //     data.reduce(function (a, b) {
-        //         return a + b.weight;
-        //     }, 0);
-        //
-        // svg.append('svg:text')
-        //     .attr('class', 'aster-score')
-        //     .attr('dy', '.35em')
-        //     .attr('text-anchor', 'middle') // text-align: right
-        //     .text(Math.round( score));
+                l++;
+            }
+        });
 
     }, [data]);
 
-    return <svg ref={svgRef} width={500} height={500} />;
+    return <svg ref={svgRef} width={svgWidth} height={svgHeight} />;
 };
 
 export default WheelChart;

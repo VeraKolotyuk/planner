@@ -20,19 +20,25 @@ type Props = {
     balanceWheelItems: IBalanceWheel[]
 }
 
+
 const BalanceWheel:React.FC<Props> = ({ balanceWheelItems }: Props) => {
+
+    function tooltipHtmlRenderer(currentLevel: number, hoveredIndex: number, sectorName: string) {
+        let html = '';
+        if (currentLevel >= hoveredIndex) {
+            html = `<div>${sectorName} - ${currentLevel}. Установить на уровень ${hoveredIndex}.</div>`;
+        } else {
+            html = `<div>Установить сферу '${sectorName}' на уровень ${hoveredIndex}.</div>`;
+        }
+        return html;
+    }
 
     //TODO:: replace key with random number
     return (
         <React.Fragment>
-            <ul>
-                {
-                    balanceWheelItems.map((item, i) =>
-                        <li key={i}>{item.name} - {item.level}</li>
-                    )
-                }
-            </ul>
-            <WheelChart data={balanceWheelItems} />
+            <WheelChart data={balanceWheelItems}
+                        tooltipHtmlRenderer={tooltipHtmlRenderer}
+                        dimensions={{width:200, height: 200, margin: {top: 0, left: 0, right: 0, bottom: 0}}} />
         </React.Fragment>
     );
 };
