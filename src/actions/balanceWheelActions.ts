@@ -22,3 +22,13 @@ export const fetchBalanceWheel = ():AppThunk => {
         });
     };
 };
+
+export const updateBalanceWheel = (name: string, level: number):AppThunk => {
+    return dispatch => {
+        fetch(`${balanceWheelUrl}`).then(res => res.json()).then(response => {
+            return dispatch(fetchBalanceWheelSuccess(response));
+        }).catch(err => {
+            console.log(err);
+        });
+    };
+};

@@ -4,6 +4,12 @@ import {PieArcDatum} from 'd3';
 import {IBalanceWheel} from './balanceWheel.interface';
 import './styles.css';
 
+interface ITheme {
+    strokeColor: string;
+    selectedColor: string;
+    defaultColor: string;
+}
+
 interface IMargin {
     left: number;
     right: number;
@@ -18,22 +24,35 @@ interface IDimensions {
 }
 
 type Props = {
-    data: IBalanceWheel[];
-    onLevelClickHandler?: (a: string, b: number) => void;
-    tooltipHtmlRenderer: (a: number, b: number, c: string) => string
     dimensions: IDimensions;
-    levelHeight: number;
+    data: IBalanceWheel[];
+    levelHeight?: number;
+    levelsCount?: number;
+    theme?: ITheme;
+    onLevelClickHandler?: (a: string, b: number) => void;
+    tooltipHtmlRenderer?: (a: number, b: number, c: string) => string
 }
 
-enum Colors {
-    STROKE_COLOR = '#d2d2d2',
-    SELECTED_COLOR = '#7a7aff',
-    DEFAULT_COLOR = '#fff'
+const defaultTheme = {
+    strokeColor: '#d2d2d2',
+    selectedColor: '#7a7aff',
+    defaultColor: '#fff'
+};
+
+enum DEFAULTS {
+    LEVEL_HEIGHT = 20,
+    LEVELS_COUNT = 10,
+    TOOLTIP_SHIFT = 7,
 }
 
-const LEVELS_COUNT = 10;
-
-const WheelChart = ({ data, onLevelClickHandler, tooltipHtmlRenderer, dimensions, levelHeight }: Props) => {
+const WheelChart = ({ data,
+                      onLevelClickHandler,
+                      tooltipHtmlRenderer,
+                      dimensions,
+                      theme = defaultTheme,
+                      levelHeight = DEFAULTS.LEVEL_HEIGHT,
+                      levelsCount = DEFAULTS.LEVELS_COUNT}: Props
+) => {
     const svgRef = useRef(null);
     const { width, height, margin } = dimensions;
     const svgWidth = width + margin.left + margin.right;
@@ -43,11 +62,11 @@ const WheelChart = ({ data, onLevelClickHandler, tooltipHtmlRenderer, dimensions
         const tooltip = d3.select('body').append('div').attr('class', 'wheel-tooltip');
         tooltip.style('opacity', 0);
         tooltip.style('left', '0px').style('top', '0px');
-        return {tooltip};
+        return tooltip;
     }
 
     function getArcBackground(level: number, arcIndex: number) {
-        return level > arcIndex  ? Colors.SELECTED_COLOR : Colors.DEFAULT_COLOR;
+        return level > arcIndex  ? theme.selectedColor : theme.defaultColor;
     }
 
     useEffect(() => {
@@ -56,7 +75,10 @@ const WheelChart = ({ data, onLevelClickHandler, tooltipHtmlRenderer, dimensions
         const svg = d3.select(svgRef.current).append('g')
             .attr('transform', 'translate(' + svgWidth / 2 + ',' + svgHeight / 2 + ')');
 
-        const {tooltip} = useTooltip();
+        let tooltip: d3.Selection<HTMLDivElement, unknown, HTMLElement, any> | null = null;
+        if (tooltipHtmlRenderer) {
+            tooltip = useTooltip();
+        }
 
         const arcsWrap = svg.selectAll('.arc')
             .data(pie(data))
@@ -64,7 +86,7 @@ const WheelChart = ({ data, onLevelClickHandler, tooltipHtmlRenderer, dimensions
 
         data.forEach(() => {
             let l = 0;
-            while(l < LEVELS_COUNT) {
+            while(l < levelsCount) {
                 const arc = d3.arc<PieArcDatum<IBalanceWheel>>()
                     .innerRadius(l*levelHeight)
                     .outerRadius((1+l)*levelHeight);
@@ -75,18 +97,22 @@ const WheelChart = ({ data, onLevelClickHandler, tooltipHtmlRenderer, dimensions
                     })
                     .attr('class', 'arc')
                     .attr('data-index', l)
-                    .attr('stroke', Colors.STROKE_COLOR)
+                    .attr('stroke', theme.strokeColor)
                     .attr('d', arc)
                     .on('mouseover', (event, d) => {
-                        const i = event.currentTarget.getAttribute('data-index');
-                        tooltip.html(tooltipHtmlRenderer(d.data.level, +i+1, d.data.name))
-                            .style('left', (event.pageX + 7) + 'px')
-                            .style('top', (event.pageY + 7) + 'px');
-                        tooltip.style('opacity', .9);
+                        if (tooltip && tooltipHtmlRenderer) {
+                            const i = event.currentTarget.getAttribute('data-index');
+                            tooltip.html(tooltipHtmlRenderer(d.data.level, +i+1, d.data.name))
+                                .style('left', (event.pageX + DEFAULTS.TOOLTIP_SHIFT) + 'px')
+                                .style('top', (event.pageY + DEFAULTS.TOOLTIP_SHIFT) + 'px');
+                            tooltip.style('opacity', .9);
+                        }
                     })
                     .on('mouseout', function() {
-                        tooltip.style('opacity', 0);
-                        tooltip.style('left', '0px').style('top', '0px');
+                        if (tooltip) {
+                            tooltip.style('opacity', 0);
+                            tooltip.style('left', '0px').style('top', '0px');
+                        }
                     })
                     .on('click', (event, d) => {
                         if (onLevelClickHandler) {
