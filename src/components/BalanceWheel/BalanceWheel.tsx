@@ -25,8 +25,10 @@ const BalanceWheel:React.FC<Props> = ({ balanceWheelItems }: Props) => {
 
     function tooltipHtmlRenderer(currentLevel: number, hoveredIndex: number, sectorName: string) {
         let html = '';
-        if (currentLevel >= hoveredIndex) {
-            html = `<div>${sectorName} - ${currentLevel}. Установить на уровень ${hoveredIndex}.</div>`;
+        if (currentLevel > hoveredIndex) {
+            html = `<div>Сфера '${sectorName}' - уровень ${currentLevel}. Установить на уровень ${hoveredIndex}.</div>`;
+        } else if (currentLevel === hoveredIndex) {
+            html = `<div>Сфера '${sectorName}' - уровень ${currentLevel}</div>`;
         } else {
             html = `<div>Установить сферу '${sectorName}' на уровень ${hoveredIndex}.</div>`;
         }
@@ -37,8 +39,9 @@ const BalanceWheel:React.FC<Props> = ({ balanceWheelItems }: Props) => {
     return (
         <React.Fragment>
             <WheelChart data={balanceWheelItems}
+                        levelHeight={20}
                         tooltipHtmlRenderer={tooltipHtmlRenderer}
-                        dimensions={{width:200, height: 200, margin: {top: 0, left: 0, right: 0, bottom: 0}}} />
+                        dimensions={{width:400, height: 400, margin: {top: 10, left: 10, right: 10, bottom: 10}}} />
         </React.Fragment>
     );
 };

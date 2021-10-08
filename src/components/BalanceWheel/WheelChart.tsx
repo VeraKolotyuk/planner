@@ -22,6 +22,7 @@ type Props = {
     onLevelClickHandler?: (a: string, b: number) => void;
     tooltipHtmlRenderer: (a: number, b: number, c: string) => string
     dimensions: IDimensions;
+    levelHeight: number;
 }
 
 enum Colors {
@@ -30,7 +31,9 @@ enum Colors {
     DEFAULT_COLOR = '#fff'
 }
 
-const WheelChart = ({ data, onLevelClickHandler, tooltipHtmlRenderer, dimensions }: Props) => {
+const LEVELS_COUNT = 10;
+
+const WheelChart = ({ data, onLevelClickHandler, tooltipHtmlRenderer, dimensions, levelHeight }: Props) => {
     const svgRef = useRef(null);
     const { width, height, margin } = dimensions;
     const svgWidth = width + margin.left + margin.right;
@@ -48,12 +51,10 @@ const WheelChart = ({ data, onLevelClickHandler, tooltipHtmlRenderer, dimensions
     }
 
     useEffect(() => {
-        const scale = 10;
-
         const pie = d3.pie<IBalanceWheel>().value(1);
 
         const svg = d3.select(svgRef.current).append('g')
-            .attr('transform', 'translate(' + width / 2 + ',' + height / 2 + ')');
+            .attr('transform', 'translate(' + svgWidth / 2 + ',' + svgHeight / 2 + ')');
 
         const {tooltip} = useTooltip();
 
@@ -63,10 +64,10 @@ const WheelChart = ({ data, onLevelClickHandler, tooltipHtmlRenderer, dimensions
 
         data.forEach(() => {
             let l = 0;
-            while(l < scale) {
+            while(l < LEVELS_COUNT) {
                 const arc = d3.arc<PieArcDatum<IBalanceWheel>>()
-                    .innerRadius(l*scale)
-                    .outerRadius(l*scale + scale);
+                    .innerRadius(l*levelHeight)
+                    .outerRadius((1+l)*levelHeight);
 
                 arcsWrap.append('path')
                     .attr('fill', function (d: PieArcDatum<IBalanceWheel>) {
