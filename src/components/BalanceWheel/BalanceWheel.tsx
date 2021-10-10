@@ -4,7 +4,7 @@ import {bindActionCreators, Dispatch} from 'redux';
 import {fetchBalanceWheel, updateBalanceWheel} from '../../actions/balanceWheelActions';
 import {RootState} from '../../store';
 import {IBalanceWheel} from './balanceWheel.interface';
-import WheelChart from './WheelChart';
+import {WheelChart} from 'd3-wheel-chart';
 
 const mapDispatchToProps = (dispatch:Dispatch) => ({
     fetchBalanceWheel: bindActionCreators(fetchBalanceWheel, dispatch),

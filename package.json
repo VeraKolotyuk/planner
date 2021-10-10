@@ -25,6 +25,7 @@
     "currency-symbol-map": "^5.0.1",
     "d3": "^7.1.1",
     "d3-tip": "^0.9.1",
+    "d3-wheel-chart": "^1.0.4",
     "enzyme": "^3.11.0",
     "history": "4.10.1",
     "json-server": "^0.16.3",
