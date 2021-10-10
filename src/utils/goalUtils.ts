@@ -11,14 +11,3 @@ export function toogleMoodboardImage(moodboard: string[], moodboardImage: string
     }
     return updated;
 }
-
-export const balanceWheelItemsDefaults = [
-    {name: 'карьера', level: 1},
-    {name: 'семья', level: 1},
-    {name: 'друзья', level: 1},
-    {name: 'здоровье', level: 5},
-    {name: 'хобби', level: 1},
-    {name: 'деньги', level: 1},
-    {name: 'отдых', level: 1},
-    {name: 'саморазвитие', level: 1}
-];

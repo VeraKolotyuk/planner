@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators, Dispatch} from 'redux';
 import {fetchBalanceWheel, updateBalanceWheel} from '../../actions/balanceWheelActions';
@@ -18,10 +18,15 @@ const mapStateToProps = (store: RootState) => ({
 const connector = connect(mapStateToProps, mapDispatchToProps);
 
 type Props = {
-    balanceWheelItems: IBalanceWheel[]
+    balanceWheelItems: IBalanceWheel[],
+    fetchBalanceWheel: () => void,
+    updateBalanceWheel: (a: string, b: number, c: IBalanceWheel[]) => void
 }
 
-const BalanceWheel:React.FC<Props> = ({ balanceWheelItems }: Props) => {
+const BalanceWheel:React.FC<Props> = ({ balanceWheelItems, fetchBalanceWheel, updateBalanceWheel }: Props) => {
+    useEffect(() => {
+        fetchBalanceWheel();
+    }, []);
 
     function tooltipHtmlRenderer(currentLevel: number, hoveredIndex: number, sectorName: string) {
         let html = '';
@@ -35,8 +40,8 @@ const BalanceWheel:React.FC<Props> = ({ balanceWheelItems }: Props) => {
         return html;
     }
 
-    function onLevelClickHandler(name: string, level: number) {
-        updateBalanceWheel(name, level);
+    function onLevelClickHandler(name: string, levelIndex: number) {
+        updateBalanceWheel(name, +levelIndex+1, balanceWheelItems);
     }
 
     //TODO:: replace key with random number

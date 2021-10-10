@@ -1,7 +1,6 @@
 import ACTION_TYPES from '../actions/actionTypes';
 import { AnyAction } from 'redux';
 import {IBalanceWheel} from '../components/BalanceWheel/balanceWheel.interface';
-import {balanceWheelItemsDefaults} from '../utils/goalUtils';
 
 type UBalanceWheelState = {
     balanceWheel: IBalanceWheel[]
@@ -9,7 +8,7 @@ type UBalanceWheelState = {
 
 const balanceWheelReducer = (
     state: UBalanceWheelState = {
-        balanceWheel: balanceWheelItemsDefaults,
+        balanceWheel: [],
     },
     action: AnyAction
 ): UBalanceWheelState => {
@@ -17,7 +16,7 @@ const balanceWheelReducer = (
         case ACTION_TYPES.FETCH_BALANCE_WHEEL_SUCCESS:
             return {
                 ...state,
-                balanceWheel: action.goals
+                balanceWheel: action.balanceWheel
             };
         default:
             return state;
