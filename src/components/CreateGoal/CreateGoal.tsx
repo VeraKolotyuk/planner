@@ -2,11 +2,12 @@ import ReactModal from 'react-modal';
 import {FunctionComponent, useState} from 'react';
 import styled from 'styled-components';
 import Input from '../Template/Input';
-
+import Select from 'react-select';
 type Props = {
     showModal: boolean,
     toggleCreateGoalModal: (a:boolean) => void,
     saveGoal: (a:string, b: string) => void,
+    wheelSectors: string[]
 }
 
 const formField = `
@@ -38,9 +39,13 @@ const Button = styled.button`
     font-family: Helvetica, sans-serif;
 `;
 
-const CreateGoal: FunctionComponent<Props> = ({ showModal, toggleCreateGoalModal, saveGoal }: Props) => {
+
+const CreateGoal: FunctionComponent<Props> = ({ showModal, toggleCreateGoalModal, saveGoal, wheelSectors }: Props) => {
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
+    const options = wheelSectors.map((name: string) => {
+        return {'value': name, 'label': name};
+    });
     return (
         <ReactModal
             style={{
@@ -64,6 +69,7 @@ const CreateGoal: FunctionComponent<Props> = ({ showModal, toggleCreateGoalModal
         >
             <Form>
                 <h4>New Goal</h4>
+                <Select options={options} />
                 <Input type="text"
                        placeholder={'Title'}
                        value={title}

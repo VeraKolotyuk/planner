@@ -51,7 +51,7 @@ const BalanceWheel:React.FC<Props> = ({ balanceWheelItems, fetchBalanceWheel, up
                         levelHeight={20}
                         onLevelClickHandler={onLevelClickHandler}
                         tooltipHtmlRenderer={tooltipHtmlRenderer}
-                        dimensions={{width:400, height: 400, margin: {top: 10, left: 10, right: 10, bottom: 10}}} />
+                        dimensions={{width:400, height: 400, margin: {top: 70, left: 70, right: 70, bottom: 70}}} />
         </React.Fragment>
     );
 };

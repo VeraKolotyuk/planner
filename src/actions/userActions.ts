@@ -1,5 +1,6 @@
 import ACTION_TYPES from './actionTypes';
 import { IGoal } from '../components/GoalsPage/goal.interface';
+import {ITodo} from '../components/GoalChecklist/todo.interface';
 import { AppThunk } from '../store';
 import { goalsUrl } from '../utils/requestUtils';
 import {toogleMoodboardImage} from '../utils/goalUtils';
@@ -92,14 +93,49 @@ export function deleteGoal(goalId: string):AppThunk {
     };
 }
 
-export function addTodo(goal: IGoal, todo: string, todos: string[]):AppThunk {
+export function addTodo(goal: IGoal, todo: ITodo, todos: ITodo[]):AppThunk {
     return dispatch => {
         fetch(`${goalsUrl}/${goal.id}`, {method: 'PUT',
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({...goal, checklist: [...todos, todo]})
         })
         .then(res => res.json()).then(() => {
-            return dispatch(fetchGoals());
+            return dispatch(fetchGoal(goal.id));
+        }).catch(err => {
+            console.log(err);
+        });
+    };
+}
+
+export function updateTodo(goal: IGoal, todo: ITodo):AppThunk {
+    const updated = goal.checklist.find(el => el.id === todo.id);
+    if (updated) {
+        updated.title = todo.title;
+        updated.checked = todo.checked;
+    }
+    return dispatch => {
+        fetch(`${goalsUrl}/${goal.id}`, {method: 'PUT',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(goal)
+        }).then(res => res.json()).then(() => {
+            return dispatch(fetchGoal(goal.id));
+        }).catch(err => {
+            console.log(err);
+        });
+    };
+}
+
+export function deleteTodo(goal: IGoal, todoId: string):AppThunk {
+    const todo = goal.checklist.find(el=> el.id === todoId);
+    if (todo) {
+        goal.checklist.splice(goal.checklist.indexOf(todo), 1);
+    }
+    return dispatch => {
+        fetch(`${goalsUrl}/${goal.id}`, {method: 'PUT',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(goal)
+        }).then(res => res.json()).then(() => {
+            return dispatch(fetchGoal(goal.id));
         }).catch(err => {
             console.log(err);
         });

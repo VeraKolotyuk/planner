@@ -2,7 +2,7 @@ import React, {useEffect} from 'react';
 import {connect, ConnectedProps} from 'react-redux';
 import { Link } from 'react-router-dom';
 import {bindActionCreators, Dispatch} from 'redux';
-import {fetchGoals, toggleCreateGoalModal, saveGoal, deleteGoal, addTodo} from '../../actions/userActions';
+import {fetchGoals, toggleCreateGoalModal, saveGoal, deleteGoal, addTodo, deleteTodo, updateTodo} from '../../actions/userActions';
 import {IGoal} from './goal.interface';
 import {RootState} from '../../store';
 import CreateGoal from '../CreateGoal/CreateGoal';
@@ -12,6 +12,8 @@ import styled from 'styled-components';
 import SectionHeader from '../Template/SectionHeader';
 import Button from '../Template/Button';
 import BalanceWheel from '../BalanceWheel/BalanceWheel';
+import {IBalanceWheel} from '../BalanceWheel/balanceWheel.interface';
+import {ITodo} from '../GoalChecklist/todo.interface';
 
 const mapDispatchToProps = (dispatch:Dispatch) => ({
     fetchGoals: bindActionCreators(fetchGoals, dispatch),
@@ -19,10 +21,13 @@ const mapDispatchToProps = (dispatch:Dispatch) => ({
     saveGoal: bindActionCreators(saveGoal, dispatch),
     deleteGoal: bindActionCreators(deleteGoal, dispatch),
     addTodo: bindActionCreators(addTodo, dispatch),
+    updateTodo: bindActionCreators(updateTodo, dispatch),
+    deleteTodo: bindActionCreators(deleteTodo, dispatch),
 });
 
 const mapStateToProps = (store: RootState) => ({
     goals: store.userReducer.goals,
+    balanceWheel: store.balanceWheelReducer.balanceWheel,
     isShownCreateGoalModal: store.userReducer.isShownCreateGoalModal
 });
 
@@ -35,7 +40,9 @@ type GoalProps = PropsFromRedux & {
     saveGoal: (a: string, b: string) => void,
     deleteGoal: (a: string) => void,
     isShownCreateGoalModal: boolean,
-    addTodo: (a: IGoal, b: string, c: string[]) => void,
+    addTodo: (a: IGoal, b: ITodo, c: ITodo[]) => void,
+    updateTodo: (a: IGoal, b: ITodo) => void,
+    deleteTodo: (a: IGoal, b: string) => void
 }
 
 const GoalsList = styled.ul`
@@ -50,31 +57,47 @@ const GoalsPage:React.FC<GoalProps> = ({ goals,
                                          toggleCreateGoalModal,
                                          saveGoal,
                                          deleteGoal,
-                                         addTodo
+                                         addTodo,
+                                         updateTodo,
+                                         deleteTodo,
+                                         balanceWheel
 }: GoalProps) => {
     useEffect(() => {
         fetchGoals();
     }, []);
 
+    function updateTodoForGoal(goal: IGoal, todo: ITodo) {
+        if (goal) {
+            updateTodo(goal, todo);
+        }
+    }
+
     return (
-        <div>
-            <BalanceWheel />
-            <Button onClick={() => toggleCreateGoalModal(true)}>Create Goal</Button>
-            <CreateGoal showModal={isShownCreateGoalModal}
-                        toggleCreateGoalModal={toggleCreateGoalModal}
-                        saveGoal={saveGoal}
-            />
-            <GoalsList>
-                {goals.map((goal: IGoal) =>
-                    <li key={goal.id}>
-                        <SectionHeader><Link to={`/goal/${goal.id}`}>{goal.title}</Link></SectionHeader>
-                        <p>{goal.description}</p>
-                        {goal.checklist && <GoalChecklist checklist={goal.checklist} />}
-                        <CreateGoalChecklist addTodo={addTodo} goal={goal} />
-                        <Button onClick={() => deleteGoal(goal.id)}>Delete Goal</Button>
-                    </li>
-                )}
-            </GoalsList>
+        <div className="main-content">
+            <div>
+                <Button onClick={() => toggleCreateGoalModal(true)}>Новая Цель</Button>
+                <CreateGoal showModal={isShownCreateGoalModal}
+                            toggleCreateGoalModal={toggleCreateGoalModal}
+                            saveGoal={saveGoal}
+                            wheelSectors={balanceWheel.map((el: IBalanceWheel)=>el.name)}
+                />
+                <GoalsList>
+                    {goals.map((goal: IGoal) =>
+                        <li key={goal.id}>
+                            <SectionHeader><Link to={`/goal/${goal.id}`}>{goal.title}</Link></SectionHeader>
+                            <p>{goal.description}</p>
+                            {/*{goal.checklist && <GoalChecklist checklist={goal.checklist}*/}
+                            {/*                                  updateTodo={(todo) => updateTodoForGoal(goal, todo)}*/}
+                            {/*                                  deleteTodo={deleteTodo}*/}
+                            {/*                                  goal={goal}*/}
+                            {/*/>}*/}
+                            {/*<CreateGoalChecklist addTodo={addTodo} goal={goal} />*/}
+                            {/*<Button onClick={() => deleteGoal(goal.id)}>Удалить</Button>*/}
+                        </li>
+                    )}
+                </GoalsList>
+            </div>
+            <div><BalanceWheel /></div>
         </div>
     );
 };

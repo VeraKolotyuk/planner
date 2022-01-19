@@ -7,7 +7,18 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+header {
+  font-family: 'IBM Plex Sans', sans-serif;
+  font-size:  38px;
+  padding: 2rem 3rem;
+}
+
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
+}
+
+.main-content {
+  display: flex;
+  justify-content: space-between;
 }

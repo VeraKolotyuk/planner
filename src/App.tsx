@@ -15,6 +15,7 @@ Modal.setAppElement('#root');
 const App = ({history}: AppProps) => {
     return (
         <div className="App">
+            <header>Planner</header>
             <ConnectedRouter history={history}>
                 <Switch>
                     <Route exact path="/" component={GoalsPage} />
